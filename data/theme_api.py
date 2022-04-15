@@ -43,7 +43,7 @@ def set_theme_header():
 
 
 @blueprint.route('/api/user_get_notes/<int:id>', methods=['GET'])
-def get_themes_from_user(id):
+def get_notes(id):
     theme = Theme.theme_from_id(id)
     notes = theme.get_notes()
     return jsonify(
@@ -105,4 +105,5 @@ def add_note():
     theme_id = req['theme_id']
     header = req['header']
     theme = Theme.theme_from_id(theme_id)
-    theme.add_note(text='', links='', header=header)
+    theme.add_note(text=' ', links=' ', header=header)
+    return jsonify({'answer': 'yes'})

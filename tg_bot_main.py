@@ -130,7 +130,7 @@ def add_note(update: Update, context: CallbackContext):
     for i in range(len(res)):
         req2 = f'api/theme_header/{res[i]}'
         bt_text = get(config.address + req2).json()['answer']
-        reply.append([KeyboardButton(f'/add_note_with_theme {bt_text} && {message}')])
+        reply.append([KeyboardButton(f'/add_note_to_theme {bt_text} && {message}')])
     markup = ReplyKeyboardMarkup(reply)
     update.message.reply_text('добавить', reply_markup=markup)
 
@@ -139,17 +139,55 @@ def add_note_to_theme(update: Update, context: CallbackContext):
     id = update.effective_user.id
     old, new = ' '.join(update.message.text.split()[1:]).split('& ')
     old = old[:-2]
-    req = 'api/id_from_header/'
+    req = 'api/id_from_header'
     id = str(get(config.address + req + f'/{id}/{old}').json()['answer'])
     if not id.isdigit():
+        print(1)
         raise AttributeError("LOH")
     req2 = 'api/add_note'
-    res = put(config.address + req2, json={'id': id, 'header': new})
-    update.message.reply_text()
+    res = post(config.address + req2, json={'theme_id': id, 'header': new})
+    reply = []
+    b1 = KeyboardButton(f'/add_links_to_note {new}')
+    b2 = KeyboardButton(f'/add_text_to_note {new}')
+    b3 = KeyboardButton(f'отменить')
+    reply.append([b1])
+    reply.append([b2])
+    reply.append([b3])
+    markup = ReplyKeyboardRemove(reply)
+    update.message.reply_text(reply_markup=markup)
+
+
+def get_notes_theme(update: Update, context: CallbackContext):
+    id = update.effective_user.id
+    message = ' '.join(update.message.text.split()[1:])
+    req = f'api/user_get_themes/{id}'
+    res = get(config.address + req).json()['answer']
+    reply = [['отменить']]
+    for i in range(len(res)):
+        req2 = f'api/theme_header/{res[i]}'
+        bt_text = get(config.address + req2).json()['answer']
+        reply.append([KeyboardButton(f'/get_note_from_theme {bt_text}')])
+    markup = ReplyKeyboardMarkup(reply)
+    update.message.reply_text('выбрать', reply_markup=markup)
 
 
 def get_notes(update: Update, context: CallbackContext):
-    pass
+    id = update.effective_user.id
+
+    message = ' '.join(update.message.text.split()[1:])
+    req = 'api/id_from_header/'
+    id = str(get(config.address + req + f'/{id}/{message}').json()['answer'])
+    if not id.isdigit():
+        raise AttributeError("LOH")
+    req2 = f'api/get_notes/{id}'
+    res = get(config.address + req2).json()['answer']
+    if not res:
+        update.message.reply_text(f'в теме {message} нет заметок')
+    return ''
+    s = ''
+    for i in res:
+        s += str(i) + '\n'
+    update.message.reply_text(s)
 
 
 def main():
@@ -165,6 +203,9 @@ def main():
     dispatcher.add_handler(CommandHandler('del_theme', delete_theme))
     dispatcher.add_handler(CommandHandler('delete_theme', del_theme))
     dispatcher.add_handler(CommandHandler('add_note', add_note))
+    dispatcher.add_handler(CommandHandler('add_note_to_theme', add_note_to_theme))
+    dispatcher.add_handler(CommandHandler('get_notes', get_notes_theme))
+    dispatcher.add_handler(CommandHandler('get_note_from_theme', get_notes))
     dispatcher.add_handler(MessageHandler(Filters.text, any_text))
     updater.start_polling()
     updater.idle()
