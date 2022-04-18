@@ -52,7 +52,7 @@ class Theme(SqlAlchemyBase, SerializerMixin):
         session.query(Theme).filter(Theme.id == theme_id).delete()
         session.commit()
         session.close()
-        return f'successfully deleted/changed theme {theme.first().header}'
+        return f'successfully deleted/changed theme'
 
     @classmethod
     def theme_from_id(cls, id):

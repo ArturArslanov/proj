@@ -1,6 +1,8 @@
 import flask
 from flask import jsonify, request
 
+from data import db_session
+from data.Theme import Theme
 from data.User import User
 
 blueprint = flask.Blueprint(
@@ -30,6 +32,7 @@ def add_user():
     if 'tele_id' in req.keys():
         id = req['tele_id']
         User.set_id(nomer, id)
+    Theme.add_theme(header='всякое', user_id=id)
     return jsonify({
         'answer': answer
     })

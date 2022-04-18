@@ -48,7 +48,7 @@ def get_notes(id):
     notes = theme.get_notes()
     return jsonify(
         {
-            'answer': notes
+            'answer': [note.header for note in notes]
         }
     )
 

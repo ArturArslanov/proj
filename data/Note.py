@@ -27,10 +27,13 @@ class Note(SqlAlchemyBase, SerializerMixin):
         self.header = header
 
     def get_links(self):
-        return self.links.split()
+        session = db_session.create_session()
+        links = []
+        for i in self.links.split():
+            links.append(session.query(Note.header).filter(Note.id == int(i)).first()[0])
+        session.close()
+        return links
 
-    def get_theme(self):
-        return self.theme
 
     @classmethod
     def note_from_id(cls, id):
@@ -38,9 +41,6 @@ class Note(SqlAlchemyBase, SerializerMixin):
         note = session.query(Note).filter(Note.id == id).first()
         session.close()
         return note
-
-    def add_links(self, new_links: list):
-        self.links = self.links + ' ' + ' '.join(new_links)
 
     def set_links(self, new_links):
         if isinstance(new_links, list):
@@ -63,4 +63,3 @@ class Note(SqlAlchemyBase, SerializerMixin):
     def set_text(self, new_text):
         self.text = new_text
         return f'successfully set text'
-
