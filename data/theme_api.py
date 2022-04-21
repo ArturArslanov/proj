@@ -1,10 +1,12 @@
 import config
 import flask
 from flask import jsonify, request
-from requests import get
+from requests import get, post
 
 from data import db_session
 from data.Theme import Theme
+from form.add_note import AddNoteForm
+from form.add_theme import AddThemeForm
 
 blueprint = flask.Blueprint(
     'theme_api',
@@ -107,3 +109,17 @@ def add_note():
     theme = Theme.theme_from_id(theme_id)
     theme.add_note(text=' ', links=' ', header=header)
     return jsonify({'answer': 'yes'})
+
+
+@blueprint.route('/add_note', methods=['POST', 'PUT'])
+def add_note_form():
+    form = AddNoteForm()
+    if form.validate_on_submit():
+        # post(config.address + 'api/add_note/', json={'header': form.header.data,'theme_id':})
+        pass
+
+@blueprint.route('/add_theme',methods=['POST','PUT'])
+def add_theme_form():
+    form = AddThemeForm()
+    if form.validate_on_submit():
+

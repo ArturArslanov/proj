@@ -109,7 +109,6 @@ def add_links():
             if header_notes[k] in links:
                 real_note.links = real_note.links + ' ' + f'{notes[k].id}'
                 del links[links.index(header_notes[k])]
-    print(real_note.links)
     session.commit()
     session.close()
 
@@ -185,3 +184,4 @@ def del_note():
     return jsonify(
         {'answer': f'deleted'}
     )
+

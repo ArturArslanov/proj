@@ -10,3 +10,6 @@ def hashing(text):
     salt = hex(15)
     s_password = hashlib.sha256(password.encode('utf-8') + salt.encode('utf-8')).hexdigest()
     return s_password
+
+
+params = {}

@@ -1,9 +1,14 @@
+from werkzeug.utils import redirect
+
+import config
 import flask
-from flask import jsonify, request
+from flask import jsonify, request, render_template
+from requests import post
 
 from data import db_session
 from data.Theme import Theme
 from data.User import User
+from form.registr import RegisterForm
 
 blueprint = flask.Blueprint(
     'api_jobs',
@@ -93,3 +98,13 @@ def get_id_from_nomer():
     nomer = res['nomer']
     answer = User.id_from_nomer(nomer)
     return answer
+
+
+@blueprint.route('/add_user', methods=['POST', 'PUT'])
+def registr():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        post(config.address + 'api/user_add/',
+             json={'name': form.name.data, 'nomer': form.number.data})
+        return redirect('/')
+    return render_template('register.html', title1='Регистрация', form=form, **config.params)
