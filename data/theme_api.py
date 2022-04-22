@@ -122,4 +122,5 @@ def add_note_form():
 def add_theme_form():
     form = AddThemeForm()
     if form.validate_on_submit():
+        pass
 

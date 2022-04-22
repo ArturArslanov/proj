@@ -25,11 +25,6 @@ def index():
     return 'да'
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
-
 
 def main():
     db_session.global_init(bd_path)
