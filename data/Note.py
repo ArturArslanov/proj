@@ -30,10 +30,9 @@ class Note(SqlAlchemyBase, SerializerMixin):
         session = db_session.create_session()
         links = []
         for i in self.links.split():
-            links.append(session.query(Note.header).filter(Note.id == int(i)).first()[0])
+            links.append((session.query(Note.header).filter(Note.id == int(i)).first()[0],i))
         session.close()
         return links
-
 
     @classmethod
     def note_from_id(cls, id):

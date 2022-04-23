@@ -22,6 +22,14 @@ def get_theme(id):
     return jsonify({'answer': theme_header})
 
 
+@blueprint.route('/api/note_get_header/<int:id>', methods=['GET'])
+def get_header(id):
+    session = db_session.create_session()
+    header = session.query(Note.header).filter(Note.id == id).first()[0]
+    session.close()
+    return jsonify({'answer': header})
+
+
 @blueprint.route('/api/note_links/<int:id>', methods=['GET'])
 def get_links(id):
     note = Note.note_from_id(id)
@@ -29,7 +37,7 @@ def get_links(id):
     if answer:
         return jsonify({'answer': answer})
     else:
-        return jsonify({'answer': 'нет ссылок'})
+        return jsonify({'answer': [('нет ссылок', -1),]})
 
 
 @blueprint.route('/api/note_text/<int:id>', methods=['GET'])
@@ -184,4 +192,3 @@ def del_note():
     return jsonify(
         {'answer': f'deleted'}
     )
-
