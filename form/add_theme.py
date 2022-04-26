@@ -7,5 +7,5 @@ from wtforms.validators import DataRequired
 
 class AddThemeForm(FlaskForm):
     header = StringField('название темы', validators=[DataRequired()])
-    user_id = IntegerField('id')
+    user_id = ''
     submit = SubmitField('создать')

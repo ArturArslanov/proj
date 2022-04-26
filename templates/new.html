@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+{% block content %}
+<div style="color:white; text-align: left; padding: 0% .5%;">
+    <h4 style="color:white;">это лучший инструмент для запоминания иформации с использованием тем и
+        коротких заметок в них</h4>
+    {% if not current_user.is_authenticated %}
+    <li> для начала зарегистрируйтесь</li>
+    {% else %}
+    {% for row in themes %}
+    <div class="row" style="margin: 1% 1% 1% 1%;">
+        {% for theme in row %}
+        <div class="col-sm-2.1" style="margin: 1% 1% 1% 1%;">
+            <div class="card border-success bg-secondary"
+                 style="width: 15rem;height: 15rem;">
+
+                <h5 class="card-header bg-primary"
+                    style="color:black; text-align:center;">
+                    {{theme.header}}</h5>
+                <div class="card-body mb-3">
+                    <!--<h5 class="card-title">Special title treatment</h5> если успею то максимально связанные темы-->
+                    <a href=/show_note_theme/{{theme.id}} class="text-warning btn btn-secondary"
+                       style="padding: 1% 1%; text-align:center">показать заметки</a>
+
+                    <a href=/create_note/{{theme.id}} class="btn btn-secondary"
+                       style="padding: 1% 1%;text-align:center">добавить заметку</a>
+
+                    <a href=/del_theme/{{theme.id}} class="btn btn-danger"
+                       style="padding: 1% 1%;text-align:center">удалить тему</a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <a href=/add_theme class="btn btn-secondary"
+       style="padding: 1% 1%;text-align:center">добавить тему</a>
+    {% endif %}
+</div>
+{% endblock %}

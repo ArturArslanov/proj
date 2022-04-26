@@ -1,10 +1,16 @@
+from werkzeug.utils import redirect
+
+import config
 import flask
-from flask import jsonify, request
+from flask import jsonify, request, render_template
+from flask_login import current_user
+from requests import post
 
 from data import db_session
 from data.Theme import Theme
 from data.Note import Note
 from data.User import User
+from form.add_note import AddNoteForm
 
 blueprint = flask.Blueprint(
     'noteapi',
@@ -37,7 +43,7 @@ def get_links(id):
     if answer:
         return jsonify({'answer': answer})
     else:
-        return jsonify({'answer': [('нет ссылок', -1),]})
+        return jsonify({'answer': [('нет ссылок', -1), ]})
 
 
 @blueprint.route('/api/note_text/<int:id>', methods=['GET'])
@@ -176,12 +182,55 @@ def links_to_note():
 @blueprint.route('/api/get_id_note/<string:header>/<int:theme_id>', methods=['GET'])
 def get_id_from_header(header, theme_id):
     session = db_session.create_session()
+    print(header, theme_id)
     id = session.query(Note.id).filter(Note.header == header and Note.theme_id == theme_id).first()[
         0]
+    session.expunge_all()
     session.close()
+    print(id)
     return jsonify(
         {'answer': f'{id}'}
     )
+
+
+@blueprint.route('/edit_note/<int:id>', methods=['GET', 'POST'])
+def edit_note_(id):
+    form = AddNoteForm()
+    db_sess = db_session.create_session()
+    note = db_sess.query(Note).filter(Note.id == id).first()
+    theme_id = note.theme_id
+    if request.method == "GET":
+        form.text.data = note.text
+        form.header.data = note.header
+        form.links.data = ''
+        links_ides = note.links.split()
+
+        for i in links_ides:
+            link = db_sess.query(Note.header).filter(Note.id == i).first()[0]
+            form.links.data += link
+            if i != links_ides[-1]:
+                form.links.data += ' / '
+    if form.validate_on_submit():
+        note.header = form.header.data
+        note.text = form.text.data
+        note.links = ''
+        id1 = note.id
+        user_id = current_user.id
+        form.links.data.strip()
+        if form.links.data:
+            if form.links.data[-1] == '/':
+                form.links.data = form.links.data[:-1]
+            form.links.data.strip()
+        new_links = form.links.data.replace('/', '~')
+        req = '/api/add_links/'
+        post(config.address + req, json={'id': id1, 'new_links': new_links, 'user_id': user_id})
+        db_sess.commit()
+        db_sess.expunge_all()
+        db_sess.close()
+        return redirect(f'/show_note_theme/{theme_id}')
+    db_sess.expunge_all()
+    db_sess.close()
+    return render_template('create_note.html', title1='Авторизация', form=form)
 
 
 @blueprint.route('/api/del_note', methods=['DEL', 'POST'])
@@ -192,3 +241,10 @@ def del_note():
     return jsonify(
         {'answer': f'deleted'}
     )
+
+
+@blueprint.route('/delete_note/<int:id>/<int:theme_id>', methods=['GET', 'POST'])
+def delete_note(id, theme_id):
+    req = '/api/del_note'
+    post(config.address + req, json={'id': id})
+    return redirect(f'/show_note_theme/{theme_id}')

@@ -1,4 +1,5 @@
 import sqlalchemy
+from flask_login import UserMixin
 from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
 
@@ -8,11 +9,12 @@ from config import hashing
 from data.Theme import Theme
 
 
-class User(SqlAlchemyBase, SerializerMixin):
+class User(SqlAlchemyBase, SerializerMixin,UserMixin):
     __tablename__ = 'user'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     hashed_nomer = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     orm.relation("User", back_populates='user')
 
     @classmethod
@@ -49,6 +51,7 @@ class User(SqlAlchemyBase, SerializerMixin):
         session = db_session.create_session()
         themes = session.query(Theme).filter(Theme.user_id == self.id).all()
 
+        session.expunge_all()
         session.close()
         return [theme.id for theme in themes]
 

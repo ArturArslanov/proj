@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<h1 style="text-align:left;color:white;">Регистрация</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.name != 'csrf_token' %}
+    <div style="padding: 12px 10px; width: 30%; text-align:left;">
+        {% if loop.last %}
+            <p>{{ field(type="submit", class="btn btn-primary") }}</p>
+        {% else %}
+                <p>
+                        <p style="color: white;">{{ field.label() }}</p>
+                        {{ field(class="form-control")}}
+                    {% for error in field.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </p>
+        </div>
+        {% endif %}
+    {% endfor %}
+    <div class="alert alert-warning" role="alert">
+  {{ message }}
+    </div>
+
+
+</form>
+{% endblock %}

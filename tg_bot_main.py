@@ -51,7 +51,10 @@ def help(update: Update, context: CallbackContext):
     s1 = {}
     s1['поменять имя'] = '/set_user_name'
     s1['просмотреть свои темы'] = '/get_all_themes'
+
     markup = create_inline_keybord(1, **s1)
+    link = InlineKeyboardButton(text='перейти на сайт', url='http://127.0.0.1:8089/arzetel/')
+    print(markup.inline_keyboard.append([link]))
     update.message.reply_text(answer, reply_markup=markup)
 
 
@@ -67,16 +70,22 @@ def bot_started(update: Update, context: CallbackContext):
 def add_d1(id):
     if id not in d1.keys():
         d1[id] = {'LINKS': None, 'TEXT': None, 'THEME_NOW': None, 'changed': None,
-                  'name': None, 'add_theme_name': None, 'add_note_theme': None, 'set_name': None}
+                  'name': None, 'add_theme_name': None, 'add_note_theme': None, 'set_name': None,
+                  'register': None}
 
 
 def take_nomer(update: Update, context: CallbackContext):
+    add_d1(update.effective_user.id)
     contact = update.message.contact
     name = contact.first_name
     nomer = contact.phone_number
     request = 'api/user_add'
-    post(config.address + request, json={'name': name, 'nomer': nomer,
-                                         'tele_id': update.effective_user.id})
+    res = post(config.address + request, json={'name': name, 'nomer': nomer,
+                                               'tele_id': update.effective_user.id})
+    if res.json()['answer'] == 'регистрация':
+        update.message.reply_text('напишите пароль для регистрации')
+        d1[update.effective_user.id]['register'] = True
+        return 0
     help(update, context)
 
 
@@ -123,6 +132,7 @@ def retheme(id, message, theme):
 
 
 def any_text(update: Update, context: CallbackContext):
+    add_d1(update.effective_user.id)
     message = update.message.text
     if message == 'отменить':
         close_keyboard(update, context)
@@ -173,6 +183,14 @@ def any_text(update: Update, context: CallbackContext):
         d1[update.effective_user.id]['changed'] = None
         update.message.reply_text(res)
         return 0
+    if d1[update.effective_user.id]['register']:
+        req = 'api/add_password/'
+        res = post(config.address + req,
+                   json={'user_id': update.effective_user.id, 'password': message})
+        if res.json()['answer'] == 'ok':
+            update.message.reply_text('вы успешно зарегестрировались')
+            d1[update.effective_user.id]['register'] = None
+            return 0
 
 
 def delete_theme(update: Update, context: CallbackContext):
@@ -192,7 +210,7 @@ def delete_theme(update: Update, context: CallbackContext):
 def del_theme(id, con):
     message = ' '.join(con.data.split()[1:])
     user_id = id
-    req = 'api/del_theme'
+    req = 'api/gdel_theme'
     req2 = f'api/id_from_header/{user_id}/{message}'
     id = get(config.address + req2).json()['answer']
     res = post(config.address + req, json={'user_id': user_id, 'id': id})
@@ -316,7 +334,8 @@ def show_note(id, con):
     s1['удалить заметку'] = f'/del_note {theme} && {note}'
     for i in links:
 
-        if i == 'нет ссылок' or 'нет ссылок' in i or -1 in i or isinstance(i, int):
+        if i == 'нет ссылок' or 'нет ссылок' in i or -1 in i \
+                or isinstance(i, int) or i is None or any(j is None for j in i):
             break
         s1[f'показать {i[0]}'] = f'/show_note rid={i[1]}'
     markup = create_inline_keybord(2, **s1)

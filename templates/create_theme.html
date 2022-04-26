@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="card bg-warning border-danger mb-3" style="width: 17rem; margin: 1% 5% 5% 2%">
+    <div class="card-header border-danger"> <h4>добавление темы</h4></div>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for field in form if field.name != 'csrf_token' %}
+        <div class="card-body" style="text-align:left; color:black;">
+            {% if loop.last %}
+                {{ field(type="submit", class="btn btn-primary") }}
+            {% else %}
+                {{ field.label() }}
+                {{ field(class="form-control")}}
+                {% for error in field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if message %}
+            <div class="alert alert-info" role="alert" style="margin:2% 2% 2% 2%">
+                <h6>{{ message }}</h6>
+            </div>
+        {% endif %}
+    </form>
+</div>
+
+
+{% endblock %}

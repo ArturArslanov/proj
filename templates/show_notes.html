@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% block content %}
+<div style="color:white; text-align: left; padding: 0% .5%;">
+    {% for row in notes %}
+    <div class="row" style="margin: 1% 1% 1% 1%;">
+        {% for note in row %}
+        <div class="col-sm-2.1" style="margin: 1% 1% 1% 1%;">
+            {% if con==note.id %}
+            <div class="card border-danger bg-warning"
+                 style="width: 15rem;height: 15rem;">
+                {% else %}
+                <div class="card border-success bg-secondary"
+                     style="width: 15rem;height: 15rem;">
+                    {% endif %}
+                    <h5 class="card-header bg-primary"
+                        style="color:black; text-align:center;">
+                        {{note.header}}</h5>
+                    <div class="card-body mb-3">
+                        <!--<h5 class="card-title">Special title treatment</h5> если успею то максимально связанные темы-->
+                        <div class="row">
+                            <h6 style="text-align:left;">текст: </h6>
+                            <h6 class="card-text"> {{note.text}}</h6>
+                        </div>
+
+                        <div class="row">
+                            <h6 style="text-align:left;">ссылки: </h6>
+                            {% for link in note.any %}
+                            <a href=/show_note_theme1/{{link[1]}}/{{link[2]}}
+                               style="color: orange; padding: 2% 4%;"> {{link[0]}}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer">
+                            <a href=/edit_note/{{note.id}} class="btn btn-warning">редактировать
+                                заметку</a>
+                            <a href=/delete_note/{{note.id}}/{{note.theme_id}}
+                               class="btn btn-danger">удалить заметку</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+        {% endfor %}
+        {{notes[0][0].theme_id}}
+        <a href=/create_note/{{notes[0][0].theme_id}} class="btn btn-secondary"
+           style="padding: 1% 1%;text-align:center">добавить заметку</a>
+    </div>
+    {% endblock %}

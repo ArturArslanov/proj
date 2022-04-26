@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1 style="text-align:left; color:white;">{{title1}}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <div style="padding: 12px 10px; width: 30%; text-align:left; color:white;">
+        {{ form.nomer.label }}<br>
+        {{ form.nomer(class="form-control") }} <br>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(class="form-control", type="password") }}<br>
+            {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <div class="alert alert-warning" role="alert">
+          {{ message }}
+        </div>
+        </div>
+    </form>
+{% endblock %}

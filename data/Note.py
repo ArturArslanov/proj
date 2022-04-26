@@ -14,6 +14,7 @@ class Note(SqlAlchemyBase, SerializerMixin):
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     links = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     header = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    any = []
     theme = orm.relation('Theme')
 
     @classmethod
@@ -30,7 +31,9 @@ class Note(SqlAlchemyBase, SerializerMixin):
         session = db_session.create_session()
         links = []
         for i in self.links.split():
-            links.append((session.query(Note.header).filter(Note.id == int(i)).first()[0],i))
+            link = session.query(Note.header).filter(Note.id == int(i)).first()
+            if link and len(link) > 1 and link[1]:
+                links.append((link, i))
         session.close()
         return links
 

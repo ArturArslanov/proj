@@ -18,7 +18,8 @@ class Theme(SqlAlchemyBase, SerializerMixin):
     @classmethod
     def add_theme(cls, header, user_id):
         session = db_session.create_session()
-        if session.query(Theme).filter(Theme.header == header).first():
+        if session.query(Theme).filter(Theme.header == header).filter(
+                Theme.user_id == user_id).first():
             return f'theme with header {header} already exist'
         theme = Theme(header=header, user_id=user_id)
         session.add(theme)
@@ -28,7 +29,6 @@ class Theme(SqlAlchemyBase, SerializerMixin):
 
     @classmethod
     def del_theme(cls, theme_id, user_id, anything=10 ** 9 + 1):
-        print(theme_id)
         session = db_session.create_session()
         cls.add_theme('всякое', user_id)
         if anything == 10 ** 9 + 1:
@@ -49,7 +49,8 @@ class Theme(SqlAlchemyBase, SerializerMixin):
         else:
             return f'ERROR: not theme {theme.first().header} '
         session = db_session.create_session()
-        session.query(Theme).filter(Theme.id == theme_id).delete()
+        theme = session.query(Theme).filter(Theme.id == theme_id).first()
+        session.delete(theme)
         session.commit()
         session.close()
         return f'successfully deleted/changed theme'
@@ -58,23 +59,23 @@ class Theme(SqlAlchemyBase, SerializerMixin):
     def theme_from_id(cls, id):
         session = db_session.create_session()
         theme = session.query(Theme).filter(Theme.id == id).first()
+        session.expunge_all()
         session.close()
         return theme
 
-    def add_note(self, text='', links=[], header=''):
+    def add_note(self, text='', links='', header=''):
         session = db_session.create_session()
-        note1 = session.query(Note.Note).filter(
-            Note.Note.theme_id == self.id).filter(Note.Note.header == header).first()
+        note1 = session.query(Note.Note).filter(Note.Note.theme_id == self.id).filter(
+            Note.Note.header == header).first()
         links = Note.Note.ides_from_names(links) if isinstance(links, list) else links
         if note1:
             note1.links = links
             note1.text = text
         else:
-            new_note = Note.Note(text=text, header=header, links=links, theme=self)
+            new_note = Note.Note(text=text, header=header, links='', theme=self)
             session.add(new_note)
         session.commit()
         session.close()
-
 
     # надо будет добавить юзера
 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Arz​etel​, Second Brain">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>Главная</title>
+    <link rel="stylesheet" href="../static/css/nicepage.css" media="screen">
+    <link rel="stylesheet" href="../static/css/Главная.css" media="screen">
+    <script class="u-script" type="text/javascript" src="../js/jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="../js/nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 4.9.5, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": ""
+    }</script>
+    <header class="u-clearfix u-header u-image u-header" id="sec-c6c3" data-image-width="1280"
+            data-image-height="640">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <h1 class="u-text u-text-palette-3-base u-title u-text-1">
+                <span class="u-text-black">Arz​etel</span>
+            </h1>
+
+            <h1 class="u-text u-text-2">Second Brain</h1>
+
+        </div>
+        <nav>
+            <div align="left">
+                <a href="/" style="color:orange" class="navbar-brand"> на главную</a>
+            </div>
+            {% if current_user.is_authenticated %}
+            <div align="right">
+                <a align="right" style="color:orange" class="navbar-brand" href="/logout">{{
+                    current_user.name
+                    }}</a>
+            </div>
+            {% else %}
+            <p align="right">
+                <a class="btn btn-primary" href="/register">Зарегистрироваться</a>
+                <a class="btn btn-success" href="/login">Войти</a>
+            </p>
+            {% endif %}
+        </nav>
+    </header>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Главная">
+    <meta property="og:type" content="website">
+</head>
+<body data-home-page="Главная.html" data-home-page-title="Главная" class="u-body u-xl-mode">
+<section class="u-align-center u-clearfix u-section-1" id="carousel_ba7a" data-image-width="275"
+         data-image-height="183">
+    <main role="main">
+        {% block content %}{% endblock %}
+    </main>
+    <div class="u-align-left u-clearfix u-sheet u-sheet-1"></div>
+</section>
+
+
+<footer class="u-clearfix u-footer u-grey-80" id="sec-e7f2">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div style="text-align:left">
+            <li> создайте новую тему или зайдите в тему "всякое"</li>
+            <li> затем добавьте туда заметку</li>
+            <li> просматривать всои заметки тоже можно в темах</li>
+            <li> все тоже самое можно сделать через телеграм бота</li>
+        </div>
+        <h6 class="u-text u-text-1">Бот для быстрого добавления заметок
+         <a href="https://t.me/arzetel_bot" target="_blank"
+            style="color:cyan;">https://t .me/arzetel_bot</a></h6>
+        <div class="u-border-1 u-border-white u-line u-line-horizontal u-opacity u-opacity-50 u-line-1"></div>
+
+    </div>
+</footer>
+
+
+
+
+
+
+</body>
+</html>
