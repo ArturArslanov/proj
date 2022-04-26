@@ -89,8 +89,8 @@ def get_notes_thm(id):
     return render_template('show_notes.html', notes=notes_in_notes)
 
 
-@blueprint.route('/show_note_theme1/<int:id>/<int:con>', methods=['GET'])
-def get_notes_thm1(id, con):
+@blueprint.route('/show_note_theme1/<int:id>/<int:con1>', methods=['GET', 'POST','PUT','DELETE'])
+def get_notes_thm1(id, con1):
     theme = Theme.theme_from_id(id)
     notes = theme.get_notes()
     n = 5
@@ -113,7 +113,7 @@ def get_notes_thm1(id, con):
             k += 1
     session.expunge_all()
     session.close()
-    return render_template('show_notes.html', notes=notes_in_notes)
+    return render_template('show_con_note.html', notes=notes_in_notes, real_note=con1)
 
 
 @blueprint.route('/api/theme_communicate_level/<int:id>', methods=['GET'])
